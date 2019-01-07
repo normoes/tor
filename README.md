@@ -1,6 +1,6 @@
 ## Supported tags and respective `Dockerfile` links
 * `latest` ([Dockerfile](https://github.com/XMRto/tor/blob/master/Dockerfile))
-* `0.2.9.16` ([Dockerfile](https://github.com/XMRto/tor/blob/0.2.9.16/Dockerfile))
+# * `0.2.9.16` ([Dockerfile](https://github.com/XMRto/tor/blob/0.2.9.16/Dockerfile))
 
 ---
 
