@@ -1,0 +1,14 @@
+SOCKSPort 0.0.0.0:9050
+# comment for local use with e.g. curl
+SOCKSPolicy "reject *"
+
+HiddenServiceDir /var/lib/tor/daemons/
+HiddenServicePort 18181 127.0.0.1:18081
+HiddenServicePort 28181 127.0.0.1:28081
+HiddenServicePort 38181 127.0.0.1:38081
+HiddenServicePort 8181 127.0.0.1:8081
+HiddenServicePort 8182 127.0.0.1:8082
+HiddenServicePort 8183 127.0.0.1:8083
+
+DataDirectory /var/lib/tor
+Log notice file /var/log/tor/notices.log
