@@ -3,9 +3,9 @@ SOCKSPort 0.0.0.0:9050
 SOCKSPolicy "reject *"
 
 HiddenServiceDir /var/lib/tor/daemons/
-HiddenServicePort 18181 127.0.0.1:18081
-HiddenServicePort 28181 127.0.0.1:28081
-HiddenServicePort 38181 127.0.0.1:38081
+HiddenServicePort 18081 127.0.0.1:18081
+HiddenServicePort 28081 127.0.0.1:28081
+HiddenServicePort 38081 127.0.0.1:38081
 HiddenServicePort 8081 127.0.0.1:8081
 HiddenServicePort 8082 127.0.0.1:8082
 HiddenServicePort 8083 127.0.0.1:8083
