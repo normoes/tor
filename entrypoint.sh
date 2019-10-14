@@ -2,4 +2,4 @@
 
 chown -R tor /var/lib/tor
 
-exec su-exec tor /usr/bin/tor
+exec su-exec tor /usr/bin/tor -f /etc/tor/torrc
