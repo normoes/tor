@@ -22,11 +22,17 @@ RUN apk del \
         musl-dev
 
 COPY ./torrc /etc/tor/torrc
+COPY ./torrc.template /etc/tor/torrc.template
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 VOLUME ["/var/lib/tor"]
 
 EXPOSE 9050
+
+ENV HOSTNAME=""
+ENV PRIVATE_KEY=""
+ENV SERVICE_NAME="hidden_service"
+ENV SERVICE_PORT=18081
 
 # USER tor
 

@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  tor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: "host"
+    environment:
+      HOSTNAME: xmrtoastkdf34yf7.onion 
+      PRIVATE_KEY: $PRIV_KEY
+      SERVICE_PORT: 5000
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "3"
