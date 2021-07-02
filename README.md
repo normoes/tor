@@ -1,5 +1,5 @@
 ## Supported tags and respective `Dockerfile` links
-* `latest` ([Dockerfile](https://github.com/XMRto/tor/blob/master/Dockerfile))
+* `latest` ([Dockerfile](https://github.com/melotools/tor/blob/master/Dockerfile))
 
 ---
 
@@ -21,12 +21,12 @@ This is no guide for Tor proxy security best practices. Please refer to other re
 ## Basic usage
 Use a custom `torrc` and mount a local folder (containing `hostname` and `private_key` files) into the container:
 ```
-docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $PWD/daemons:/var/lib/tor/daemons xmrto/tor
+docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $PWD/daemons:/var/lib/tor/daemons melotools/tor
 ```
 
 It's also possible to configure `tor` more dynamically by passing `hostname` and `private_key` as environment variables like this:
 ```
-docker run -d --name tor_proxy --net host -e HOSTNAME=<your_hostname.onion> -e PRIVATE_KEY=<yout_private_key> -e SERVICE_PORT=8000 -e SERVICE_NAME=some_hidden_service xmrto/tor
+docker run -d --name tor_proxy --net host -e HOSTNAME=<your_hostname.onion> -e PRIVATE_KEY=<yout_private_key> -e SERVICE_PORT=8000 -e SERVICE_NAME=some_hidden_service melotools/tor
 ```
 
 For more details, please see below.
@@ -58,7 +58,7 @@ Finally, the Tor container can be started.
 The docker option `--net host` makes the host's localhost available in the Tor docker container. This makes it possible to configure the Tor **HiddenServicePort** to `127.0.0.1:8000`, in order to access the service.
 
 ```
-docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc xmrto/tor
+docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc melotools/tor
 ```
 
 You can read the Tor **.onion** address from `hostname` like this (`tor_proxy` is the container's name):
@@ -68,7 +68,7 @@ You can read the Tor **.onion** address from `hostname` like this (`tor_proxy` i
 If you already have `hostname` and an according `private_key` file, you can mount them into the container like you would mount the `torrc` file - assuming they are in a local folder called `service`.
 
 ```
-docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $(pwd)/service:/var/lib/tor/service xmrto/tor
+docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $(pwd)/service:/var/lib/tor/service melotools/tor
 ```
 
 
@@ -88,7 +88,7 @@ Log notice file /var/log/tor/notices.log
 Run the tor docker container. In this case no hidden sevrice is hosted. Also the Tor container does not need any access to localhost - The host's localhost is not shared with the docker container. Instead the Tor Socks Port is published to the host using `-p 9050:9050`.
 
 ```
-docker run -d --name tor_proxy -p 9050:9050 -v $PWD/torrc:/etc/tor/torrc xmrto/tor
+docker run -d --name tor_proxy -p 9050:9050 -v $PWD/torrc:/etc/tor/torrc melotools/tor
 ```
 
 Using [`torsocks`](https://trac.torproject.org/projects/tor/wiki/doc/torsocks) to tunnel network traffic of any application through the Tor proxy:
@@ -119,7 +119,7 @@ Log notice file /var/log/tor/notices.log
 Run the tor docker container - Making use of the host's localhost again (`--net host`). The folder `daemons` contains the files `hostname` and `private_key`.
 
 ```
-docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $PWD/daemons:/var/lib/tor/daemons xmrto/tor
+docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $PWD/daemons:/var/lib/tor/daemons melotools/tor
 ```
 
 In this example we provided a `hostname` file, but still we can retrieve the hostname as described.
@@ -157,12 +157,12 @@ Starting with docker image tag `v0.0.1`.
 
 The configuraton described above is only one way to use this image - mounting a volume or local directory into the docker container like this:
 ```
-docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $PWD/daemons:/var/lib/tor/daemons xmrto/tor
+docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $PWD/daemons:/var/lib/tor/daemons melotools/tor
 ```
 
 It's also possible to configure `tor` more dynamically by passing `hostname` and `private_key` as environment variables like this:
 ```
-docker run -d --name tor_proxy --net host -e HOSTNAME=<your_hostname.onion> -e PRIVATE_KEY=<yout_private_key> -e SERVICE_PORT=8000 -e SERVICE_NAME=some_hidden_service xmrto/tor
+docker run -d --name tor_proxy --net host -e HOSTNAME=<your_hostname.onion> -e PRIVATE_KEY=<yout_private_key> -e SERVICE_PORT=8000 -e SERVICE_NAME=some_hidden_service melotools/tor
 ```
 
 This way the following configuration will be createdon the fly:

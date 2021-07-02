@@ -7,6 +7,7 @@ RUN apk add --no-cache \
         make \
         gcc \
         musl-dev
+
 RUN mkdir /data && cd /data \
     && git clone https://github.com/ncopa/su-exec.git su-exec-clone \
     && cd su-exec-clone \
