@@ -3,11 +3,7 @@
 
 ---
 
-This image contains Tor.
-
-There are serveral use cases for this image:
-* Other services can be made available through the Tor network.
-* Clients can interact through the Tor network.
+This image contains Tor V3.
 
 ## Things to know
 
@@ -19,14 +15,16 @@ The docker image contains the default `/etc/tor/torrc` configuration file - Ever
 This is no guide for Tor proxy security best practices. Please refer to other resources.
 
 ## Basic usage
-Use a custom `torrc` and mount a local folder (containing `hostname` and `private_key` files) into the container:
+Use a custom `torrc` and mount a local folder (containing `hostname`, `hs_ed25519_public_key` and `hs_ed25519_secret_key` files) into the container:
 ```
 docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $PWD/daemons:/var/lib/tor/daemons melotools/tor
 ```
 
-It's also possible to configure `tor` more dynamically by passing `hostname` and `private_key` as environment variables like this:
+It's also possible to configure `tor` more dynamically by passing `hostname`, `hs_ed25519_public_key` and `hs_ed25519_secret_key` as environment variables like this:
 ```
-docker run -d --name tor_proxy --net host -e HOSTNAME=<your_hostname.onion> -e PRIVATE_KEY=<yout_private_key> -e SERVICE_PORT=8000 -e SERVICE_NAME=some_hidden_service melotools/tor
+docker run -d --name tor_proxy --net host -e HOSTNAME=<your_hostname.onion> -e PRIVATE_KEY_HEX=<yout_private_key> -e -e PUBLIC_KEY_HEX=<yout_public_key> -e SERVICE_PORT=8000 -e melotools/tor
+
+THe keys need to be passed as hex, because they're `ed25519` keys, so their content if binary. You can convert the keys from binary to hex with `xxd -p <your-key-file>`
 ```
 
 For more details, please see below.
@@ -41,7 +39,7 @@ The example `torrc` configuration below binds Tor to `0.0.0.0` and exposes Tor o
 The Socks policy rejects every SOCKS request - No client can interact using the SOCKS protocol.
 
 The example `torrc` configuration file below sets `/var/lib/tor` as Tor data directory. It also configures `/var/lib/tor/service` as the directory for the hidden service. Also our service on port `8000` should be available on port `8080` in the Tor network.
-If you don't supply a `hostname` and an appropriate `private_key` file, Tor will generate them itself within the **HiddenServiceDir** directory. These files will be created anew every time the container starts, except you persist them using a docker volume (For persisting the onoin service hostname, please see **Dynamic hostname and private keys**).
+If you don't supply a `hostname` and appropriate `hs_ed25519_public_key` and `hs_ed25519_secret_key` files, Tor will generate them itself within the **HiddenServiceDir** directory. These files will be created anew every time the container starts, except you persist them using a docker volume (For persisting the onoin service hostname, please see **Dynamic hostname and private keys**).
 
 ```
 SOCKSPort 0.0.0.0:9050
@@ -65,7 +63,7 @@ You can read the Tor **.onion** address from `hostname` like this (`tor_proxy` i
 
 `docker exec tor_proxy cat /var/lib/tor/service/hostname`
 
-If you already have `hostname` and an according `private_key` file, you can mount them into the container like you would mount the `torrc` file - assuming they are in a local folder called `service`.
+If you already have `hostname`, `hs_ed25519_public_key` and `hs_ed25519_secret_key` files, you can mount them into the container like you would mount the `torrc` file - assuming they are in a local folder called `service`.
 
 ```
 docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $(pwd)/service:/var/lib/tor/service melotools/tor
@@ -116,7 +114,7 @@ DataDirectory /var/lib/tor
 Log notice file /var/log/tor/notices.log
 ```
 
-Run the tor docker container - Making use of the host's localhost again (`--net host`). The folder `daemons` contains the files `hostname` and `private_key`.
+Run the tor docker container - Making use of the host's localhost again (`--net host`). The folder `daemons` contains the files `hostname`,  `hs_ed25519_public_key` and `hs_ed25519_secret_key`
 
 ```
 docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $PWD/daemons:/var/lib/tor/daemons melotools/tor
@@ -134,23 +132,6 @@ You can now connect your monero cli to the your monero mainnet daemon through th
 torsocks monero-wallet-cli --daemon-host <hostname.onion>:18181
 ```
 
-
-## Create a hidden service's onion address
-
-[eschalot](https://github.com/ReclaimYourPrivacy/eschalot) seems to be a very good tool to generate Tor onion addresses.
-
-**eschalot** creates the file `hostname` containing a **.onion** address and a referring `private_key` file you need to supply when hosting a hidden service, that is supposed to keep its **.onion** address.
-
-After installing it from source,you could execute the following command, in order to end up with a **.onion** address starting with `tor`.
-
-```
-./eschalot -t4 -v -c -p tor
-# -t count: number of threads to spawn (4 cores in this case)
-# -c: continue searching after the hash is found
-# -v: verbose mode
-# -p prefix: single prefix to look for ("tor" in this case)
-```
-
 ## Dynamic hostname and private keys
 
 Starting with docker image tag `v0.0.1`.
@@ -160,9 +141,9 @@ The configuraton described above is only one way to use this image - mounting a 
 docker run -d --name tor_proxy --net host -v $(pwd)/torrc:/etc/tor/torrc -v $PWD/daemons:/var/lib/tor/daemons melotools/tor
 ```
 
-It's also possible to configure `tor` more dynamically by passing `hostname` and `private_key` as environment variables like this:
+It's also possible to configure `tor` more dynamically by passing `hostname` and `hs_ed25519_public_key`, `hs_ed25519_secret_key` as environment variables like this:
 ```
-docker run -d --name tor_proxy --net host -e HOSTNAME=<your_hostname.onion> -e PRIVATE_KEY=<yout_private_key> -e SERVICE_PORT=8000 -e SERVICE_NAME=some_hidden_service melotools/tor
+docker run -d --name tor_proxy --net host -e HOSTNAME=<your_hostname.onion> -e PRIVATE_KEY_HEX=<yout_private_key> -e PUBLIC_KEY_HEX=<yout_public_key> -e SERVICE_PORT=8000 -e melotools/tor
 ```
 
 This way the following configuration will be createdon the fly:
@@ -171,13 +152,11 @@ SOCKSPort 0.0.0.0:9050
 # comment for local use with e.g. curl
 SOCKSPolicy "reject *"
 
-HiddenServiceDir /var/lib/tor/some_hidden_service/
+HiddenServiceDir /var/lib/tor/<your_hostname.onion>/
 HiddenServicePort 8000 127.0.0.1:8000
 
 DataDirectory /var/lib/tor
 Log notice file /var/log/tor/notices.log
 ```
 
-In addition the hidden service directory `/var/lib/tor/some_hidden_service` will be created and the files `/var/lib/tor/some_hidden_service/hostname` as well as `/var/lib/tor/some_hidden_service/private_key` will be created, too.
-
-The defaulti environemnt variable `SERVICE_NAME` can also be left out - Its default value is `hidden_service`.
+In addition the hidden service directory `/var/lib/tor/<your_hostname.onion>` will be created and the files `/var/lib/tor/<your_hostname.onion>/hostname`,`/var/lib/tor/<your_hostname.onion>/hs_ed25519_secret_key` and `/var/lib/tor/<your_hostname.onion>/hs_ed25519_public_key` will be created, too.

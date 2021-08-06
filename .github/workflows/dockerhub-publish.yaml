@@ -2,7 +2,7 @@ name: DockerHub Publish
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, onion-v3 ]
 
 env:
   IMAGE_NAME: melotools/tor
@@ -35,4 +35,4 @@ jobs:
           -t $IMAGE_NAME:latest .
 
       - name: Push the image tagged as latest as well
-        run: docker push $IMAGE_NAME:latest
+        run: docker push $IMAGE_NAME:v1.0.0-rc1
