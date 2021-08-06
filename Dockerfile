@@ -31,8 +31,9 @@ VOLUME ["/var/lib/tor"]
 EXPOSE 9050
 
 ENV HOSTNAME=""
-ENV PRIVATE_KEY=""
-ENV SERVICE_NAME="hidden_service"
+# ed25519 keys should be fed as hex (xxd -p mykey), and they'll be converted to bin in the container
+ENV PRIVATE_KEY_HEX=""
+ENV PUBLIC_KEY_HEX=""
 ENV SERVICE_PORT=18081
 
 # USER tor
