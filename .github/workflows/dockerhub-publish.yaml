@@ -32,7 +32,7 @@ jobs:
         run: docker build --pull
           --cache-from $IMAGE_NAME
           -f ./Dockerfile
-          -t $IMAGE_NAME:latest .
+          -t $IMAGE_NAME:v1.0.0-rc1 .
 
       - name: Push the image tagged as latest as well
         run: docker push $IMAGE_NAME:v1.0.0-rc1
