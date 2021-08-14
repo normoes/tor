@@ -1,9 +1,20 @@
 name: DockerHub Publish
 
 on:
-  create:
-    tags:
-      - "*"
+  push:
+    branches: [ master ]
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:  # manual trigger (through website)
+  repository_dispatch:  # manual trigger (through API request)
+    types: [master]
+  # weekly
+  schedule:
+    - cron: '0 0 * * 0'
+  # create:
+  #   tags:
+  #     - "*"
 
 env:
   IMAGE_NAME: normoes/tor
