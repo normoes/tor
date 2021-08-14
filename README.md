@@ -1,9 +1,11 @@
 ## Supported tags and respective `Dockerfile` links
 * `latest` ([Dockerfile](https://github.com/normoes/tor/blob/master/Dockerfile))
+* `0466_230` where `0046` represents the installed version of `tor==0.4.6.6` and `230` represents the install version of `torsocks==2.3.0`.
 
 ---
 
 This image contains Tor V3.
+`latest` always contains the most recent versions (`tor`,`torsocks`) available as docker image tag as well.
 
 ## Things to know
 

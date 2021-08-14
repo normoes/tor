@@ -3,24 +3,25 @@ FROM alpine:edge
 RUN apk add --no-cache \
         tor \
         torsocks \
+    && apk add --no-cache --virtual .build-dev \
         git \
         make \
         gcc \
-        musl-dev
-
-RUN mkdir /data && cd /data \
+        musl-dev \
+    && mkdir /data && cd /data \
     && git clone https://github.com/ncopa/su-exec.git su-exec-clone \
-    && cd su-exec-clone \
+    && cd su-exec-clone || exit 1 \
     && make \
-    && cp su-exec /usr/local/bin/ \
-    && cd .. \
-    && rm -rf /data
+    && cp su-exec /usr/local/bin/ || exit 1 \
+    && cd .. || exit 1 \
+    && rm -rf /data \
+    && apk del --no-cache \
+        .build-dev \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/* \
+    && torsocks --version > /torsocks.txt \
+    && tor --version > /tor.txt
 
-RUN apk del \
-        git \
-        make \
-        gcc \
-        musl-dev
 
 COPY ./torrc /etc/tor/torrc
 COPY ./torrc.template /etc/tor/torrc.template

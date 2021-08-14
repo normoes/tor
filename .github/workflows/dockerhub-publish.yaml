@@ -31,14 +31,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get latest tor master commit hash
-        run:  |
-          echo "BUILD_BRANCH=$(curl -s https://api.github.com/repos/normoes/tor/branches/master  | grep -i sha | awk 'NR==1{print $2}' | tr -d "\",")" >> $GITHUB_ENV
-          # echo "CLONE_BRANCH=master" >> $GITHUB_ENV
-        # if: github.ref == 'refs/heads/master'
-        if:  |
-          github.ref == 'refs/heads/master' ||
-          github.event.action == 'master'
+      # - name: Get latest tor master commit hash
+      #   run:  |
+      #     echo "BUILD_BRANCH=$(curl -s https://api.github.com/repos/normoes/tor/branches/master  | grep -i sha | awk 'NR==1{print $2}' | tr -d "\",")" >> $GITHUB_ENV
+      #     # echo "CLONE_BRANCH=master" >> $GITHUB_ENV
+      #   # if: github.ref == 'refs/heads/master'
+      #   if:  |
+      #     github.ref == 'refs/heads/master' ||
+      #     github.event.action == 'master'
 
       - name: Log into Dockerhub
         uses: docker/login-action@v1
@@ -49,21 +49,28 @@ jobs:
       - name: Pull final image if it exists
         run: docker pull $IMAGE_NAME || true
 
-      - name: Get the tag
-        id: get_tag
-        run: echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//}
-
       - name: Build updated final image if necessary
         run: docker build --pull
           --cache-from $IMAGE_NAME
           -f ./Dockerfile
           -t $IMAGE_NAME:latest .
 
+      - name: Get tor and torsocks versions from within the image
+        run:  |
+          echo "TOR_VERSION=$(docker run --rm -t --entrypoint='' normoes/tor tor --version | head -n 1 | tr -d '.' | cut -d ' ' -f3 | tr -d '\t\r\n ')" >> $GITHUB_ENV
+          echo "TORSOCKS_VERSION=$(docker run --rm -t --entrypoint='' normoes/tor torsocks --version | head -n 1 | tr -d '.' | cut -d ' ' -f2 | tr -d '\t\r\n ')" >> $GITHUB_ENV
+
       - name: Push the image tagged with latest
         run: docker push $IMAGE_NAME:latest
 
-      - name: Also tag the image with a version tag
-        run: docker tag $IMAGE_NAME:latest $IMAGE_NAME:${{ env.BUILD_BRANCH }}
+      # - name: Also tag the image with the master commit hash
+      #   run: docker tag $IMAGE_NAME:latest $IMAGE_NAME:${{ env.BUILD_BRANCH }}
+
+      # - name: And push the image with the master commit hash
+      #   run: docker push $IMAGE_NAME:${{ env.BUILD_BRANCH }}
+
+      - name: Also tag the image with the version tag
+        run: docker tag $IMAGE_NAME:latest $IMAGE_NAME:${TOR_VERSION}_${TORSOCKS_VERSION}
 
       - name: And push the image with the version tag
-        run: docker push $IMAGE_NAME:${{ env.BUILD_BRANCH }}
+        run: docker push $IMAGE_NAME:${TOR_VERSION}_${TORSOCKS_VERSION}
