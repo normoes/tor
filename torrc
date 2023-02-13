@@ -2,7 +2,7 @@ SOCKSPort 0.0.0.0:9050
 # comment for local use with e.g. curl
 SOCKSPolicy "reject *"
 
-HiddenServiceDir /var/lib/tor/service/
+HiddenServiceDir /var/lib/tor/service
 HiddenServicePort 8080 127.0.0.1:8000
 
 DataDirectory /var/lib/tor

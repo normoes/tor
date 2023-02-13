@@ -20,5 +20,6 @@ if [ -n "$HOSTNAME" -a -n "$PRIVATE_KEY_HEX" -a -n "$PUBLIC_KEY_HEX" ]; then
 fi
 
 chown -R tor /var/lib/tor
+chown -R tor /var/log/tor
 
 exec su-exec tor /usr/bin/tor -f /etc/tor/torrc

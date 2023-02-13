@@ -26,7 +26,8 @@ It's also possible to configure `tor` more dynamically by passing `hostname`, `h
 ```
 docker run -d --name tor_proxy --net host -e HOSTNAME=<your_hostname.onion> -e PRIVATE_KEY_HEX=<yout_private_key> -e PUBLIC_KEY_HEX=<yout_public_key> -e SERVICE_PORT=8000 normoes/tor
 
-THe keys need to be passed as hex, because they're `ed25519` keys, so their content if binary. You can convert the keys from binary to hex with `xxd -p <your-key-file>`
+THe keys need to be passed as hex, because they're `ed25519` keys, so their content is binary.
+You can convert the keys from binary to hex with `xxd -p <your-key-file>`.
 ```
 
 For more details, please see the example below.

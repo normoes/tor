@@ -57,7 +57,7 @@ jobs:
 
       - name: Get tor and torsocks versions from within the image
         run:  |
-          echo "TOR_VERSION=$(docker run --rm -t --entrypoint='' normoes/tor tor --version | head -n 1 | tr -d '.' | cut -d ' ' -f3 | tr -d '\t\r\n ')" >> $GITHUB_ENV
+          echo "TOR_VERSION=$(docker run --rm -t --entrypoint='' normoes/tor tor --version | awk '/^[[:blank:]]*Tor version/ {print}' | tr -d '.' | cut -d ' ' -f3 | tr -d '\t\r\n ')" >> $GITHUB_ENV
           echo "TORSOCKS_VERSION=$(docker run --rm -t --entrypoint='' normoes/tor torsocks --version | head -n 1 | tr -d '.' | cut -d ' ' -f2 | tr -d '\t\r\n ')" >> $GITHUB_ENV
 
       - name: Push the image tagged with latest
